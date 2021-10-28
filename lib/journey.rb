@@ -3,6 +3,7 @@ require_relative './station.rb'
 class Journey
   attr_reader :journey
   MINIMUM_CHARGE = 1
+  PENALTY_CHARGE = 5
   def initialize
     @journey = {}
   end
@@ -16,12 +17,14 @@ class Journey
     @journey.merge!(end: station) 
   end
 
-  def cost
-    MINIMUM_CHARGE
+  def fare
+    complete? ? Journey::MINIMUM_CHARGE : Journey::PENALTY_CHARGE
   end
 
   def complete?
-    (@journey[:start]) && (@journey[:end]) ? true : false
+    (@journey[:start]) != nil && (@journey[:end]) != nil
   end
+
+
 
 end
