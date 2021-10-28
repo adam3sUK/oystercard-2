@@ -37,7 +37,7 @@ describe OysterCard do
         expect { subject.touch_out(station) }.to raise_error "Not currently in a journey"
       end
 
-      it " returns false if touch_out" do
+      it "returns false if touch_out" do
         subject.top_up(50)
         subject.touch_in(station)
         subject.touch_out(station)

@@ -19,12 +19,17 @@ class OysterCard
 
 
    def touch_in(station)
-      fail "Already in a journey" if in_journey?
-      fail "You do not have sufficient #{MINIMUM_BALANCE}" if minimum_amount?
-      @entry_station = station
+      @current_journey = Journey.new
+      @current_journey.start_journey(station)
+
+      #fail "Already in a journey" if in_journey?
+      #fail "You do not have sufficient #{MINIMUM_BALANCE}" if minimum_amount?
    end
 
    def touch_out(station)
+      @current_journey.end_journey(station)
+      
+      
       fail "Not currently in a journey" unless in_journey?
       deduct(MINIMUM_CHARGE)
       @exit_station = station
