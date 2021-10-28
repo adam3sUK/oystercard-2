@@ -4,8 +4,9 @@ class Journey
   attr_reader :journey
   MINIMUM_CHARGE = 1
   PENALTY_CHARGE = 5
-  def initialize
-    @journey = {}
+  def initialize(start_journey=nil)
+    @start_journey = start_journey
+    @journey = {start: @start_journey}
   end
 
 

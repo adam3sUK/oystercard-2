@@ -18,31 +18,25 @@ class OysterCard
 
 
    def touch_in(station)
-      fail "You do not have sufficient #{MINIMUM_BALANCE}" if minimum_amount?
-      if @current_journey == nil 
-         @current_journey = Journey.new
-         @current_journey.start_journey(station)
-      else
-         complete_journey
-         charge_for_journey
-      end
-
-
-      #fail "Already in a journey" if in_journey?
+      minimum_amount?
+      @current_journey == nil ? @current_journey = Journey.new(station) : complete_journey
    end
 
    def touch_out(station)
-      @current_journey.end_journey(station)
-      complete_journey
-      charge_for_journey
-      #fail "Not currently in a journey" unless in_journey?
-      #deduct(MINIMUM_CHARGE)
+      if @current_journey != nil 
+         complete_journey(station)
+      else
+         @current_journey = Journey.new
+         complete_journey
+      end
    end
 
    private
 
-   def complete_journey
+   def complete_journey(station=nil)
+      @current_journey.end_journey(station)
       log_journey
+      charge_for_journey
    end
 
    def charge_for_journey
@@ -54,21 +48,12 @@ class OysterCard
       journeys << @current_journey.journey
    end
 
-   #def finish_journey
-   #   @entry_station = nil
-   #   @exit_station = nil
-   #end
-
-   def in_journey?
-      @entry_station
-   end
-
    def deduct(fare)
       @balance -= fare
    end
 
    def minimum_amount?
-      @balance < MINIMUM_BALANCE
+      fail "You do not have sufficient fund, need a minimum of £#{MINIMUM_BALANCE}" if @balance < MINIMUM_BALANCE
    end
 
 end
