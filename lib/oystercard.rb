@@ -1,14 +1,13 @@
+require_relative './journey.rb'
+
 class OysterCard
-   attr_reader :balance, :entry_station, :journeys 
+   attr_reader :balance, :entry_station, :journeys
    
    MAXIMUM_BALANCE = 90
    MINIMUM_BALANCE = 1
-   MINIMUM_CHARGE = 1
    
    def initialize
     @balance = 0
-    @entry_station = nil
-    @exit_station = nil
     @journeys = []
    end
    
@@ -19,34 +18,47 @@ class OysterCard
 
 
    def touch_in(station)
-      @current_journey = Journey.new
-      @current_journey.start_journey(station)
+      if @current_journey.exists?
+         # Chargable action
+      else
+         #begin brand new journey
+         @current_journey = Journey.new
+         @current_journey.start_journey(station)
+      end
+
 
       #fail "Already in a journey" if in_journey?
-      #fail "You do not have sufficient #{MINIMUM_BALANCE}" if minimum_amount?
+      fail "You do not have sufficient #{MINIMUM_BALANCE}" if minimum_amount?
    end
 
    def touch_out(station)
       @current_journey.end_journey(station)
       
       
-      fail "Not currently in a journey" unless in_journey?
-      deduct(MINIMUM_CHARGE)
-      @exit_station = station
-      log_journey
+      #fail "Not currently in a journey" unless in_journey?
+      #deduct(MINIMUM_CHARGE)
+      complete_journey
    end
 
    private
 
-   def log_journey
-      journeys << {entry: @entry_station, exit: @exit_station}
-      finish_journey
+   def complete_journey
+      log_journey
+      charge_for_journey
    end
 
-   def finish_journey
-      @entry_station = nil
-      @exit_station = nil
+   def charge_for_journey
+      @balance -= @current_journey.cost
    end
+
+   def log_journey
+      journeys << @current_journey.journey
+   end
+
+   #def finish_journey
+   #   @entry_station = nil
+   #   @exit_station = nil
+   #end
 
    def in_journey?
       @entry_station
@@ -54,7 +66,7 @@ class OysterCard
 
    def deduct(fare)
       @balance -= fare
-   end 
+   end
 
    def minimum_amount?
       @balance < MINIMUM_BALANCE
