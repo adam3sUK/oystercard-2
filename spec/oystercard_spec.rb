@@ -47,7 +47,7 @@ describe OysterCard do
       it "includes journey" do
         subject.top_up(50)
         subject.touch_in(station)
-        expect{ subject.touch_out(station) }.to change{subject.journies.count}.by (1)
+        expect{ subject.touch_out(station) }.to change{subject.journeys.count}.by (1)
       end
 
       it "deducted amount from the journey" do
